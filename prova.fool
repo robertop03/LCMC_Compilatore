@@ -1,0 +1,5 @@
+let
+  fun sum:int (a:int, b:int) a+b;
+in
+  print(sum(7,8))
+;
