@@ -92,6 +92,26 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return new BoolTypeNode();
 	}
 
+    @Override
+    public TypeNode visitNode(GreaterEqualNode n) throws TypeException {
+        if (print) printNode(n);
+        TypeNode l = visit(n.left);
+        TypeNode r = visit(n.right);
+        if ( !(isSubtype(l, new IntTypeNode()) && isSubtype(r, new IntTypeNode())) )
+            throw new TypeException("Non-integers in greater equal comparison", n.getLine());
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(LessEqualNode n) throws TypeException {
+        if (print) printNode(n);
+        TypeNode l = visit(n.left);
+        TypeNode r = visit(n.right);
+        if ( !(isSubtype(l, new IntTypeNode()) && isSubtype(r, new IntTypeNode())) )
+            throw new TypeException("Non-integers in less equal comparison", n.getLine());
+        return new BoolTypeNode();
+    }
+
 	@Override
 	public TypeNode visitNode(TimesNode n) throws TypeException {
 		if (print) printNode(n);

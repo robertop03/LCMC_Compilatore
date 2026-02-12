@@ -6,7 +6,7 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/compiler/FOOL.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="C:\Users\rober\Desktop\VersioneFinaleComplilatore\versione finale compilatore\" />
+          <option name="outputDir" value="C:\Users\Alessandro\Documents\LCMC\LCMC_Compilatore" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
           <option name="pkg" value="" />
@@ -16,7 +16,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="17" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="temurin-24" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

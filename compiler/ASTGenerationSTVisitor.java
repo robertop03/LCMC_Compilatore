@@ -93,7 +93,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         }
         return n;
     }
-    /*
+
     @Override
     public Node visitComp(CompContext c) {
         if (print) printVarAndProdName(c);
@@ -114,7 +114,6 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         }
         return n;
     }
-    */
 
     @Override
     public Node visitVardec(VardecContext c) {
