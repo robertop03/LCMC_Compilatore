@@ -101,7 +101,16 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return new IntTypeNode();
 	}
 
-	@Override
+    @Override
+    public TypeNode visitNode(DivNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) &&
+                isSubtype(visit(n.right), new IntTypeNode())))
+            throw new TypeException("Non-int operands in division", n.getLine());
+        return new IntTypeNode();
+    }
+
+    @Override
 	public TypeNode visitNode(PlusNode n) throws TypeException {
 		if (print) printNode(n);
 		if ( !(isSubtype(visit(n.left), new IntTypeNode())
@@ -109,6 +118,15 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Non integers in sum",n.getLine());
 		return new IntTypeNode();
 	}
+
+    @Override
+    public TypeNode visitNode(MinusNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new IntTypeNode()) &&
+                isSubtype(visit(n.right), new IntTypeNode())))
+            throw new TypeException("Non-int operands in subtraction", n.getLine());
+        return new IntTypeNode();
+    }
 
 	@Override
 	public TypeNode visitNode(CallNode n) throws TypeException {

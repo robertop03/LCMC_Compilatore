@@ -97,8 +97,19 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
-	
-	public static class PlusNode extends Node {
+
+    public static class DivNode extends Node {
+        final Node left;
+        final Node right;
+        DivNode(Node l, Node r) { left = l; right = r; }
+
+        @Override
+        public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+            return visitor.visitNode(this);
+        }
+    }
+
+    public static class PlusNode extends Node {
 		final Node left;
 		final Node right;
 		PlusNode(Node l, Node r) {left = l; right = r;}
@@ -106,6 +117,17 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+
+    public static class MinusNode extends Node {
+        final Node left;
+        final Node right;
+        MinusNode(Node l, Node r) { left = l; right = r; }
+
+        @Override
+        public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+            return visitor.visitNode(this);
+        }
+    }
 
     public static class AndNode extends Node {
         final Node left;
@@ -166,7 +188,7 @@ public class AST {
 	
 	public static class BoolNode extends Node {
 		final Boolean val;
-		BoolNode(boolean n) {val = n;}
+		BoolNode(Boolean n) {val = n;}
 
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
