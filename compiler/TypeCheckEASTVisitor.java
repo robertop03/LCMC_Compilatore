@@ -146,6 +146,35 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return new IntTypeNode();
 	}
 
+    @Override
+    public TypeNode visitNode(AndNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new BoolTypeNode()) &&
+                isSubtype(visit(n.right), new BoolTypeNode())))
+            throw new TypeException("Non-bool operands in &&", n.getLine());
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(OrNode n) throws TypeException {
+        if (print) printNode(n);
+        if (!(isSubtype(visit(n.left), new BoolTypeNode()) &&
+                isSubtype(visit(n.right), new BoolTypeNode())))
+            throw new TypeException("Non-bool operands in ||", n.getLine());
+        return new BoolTypeNode();
+    }
+
+    @Override
+    public TypeNode visitNode(NotNode n) throws TypeException {
+        if (print) printNode(n);
+
+        if (!isSubtype(visit(n.exp), new BoolTypeNode()))
+            throw new TypeException("Non-bool operand in !", n.getLine());
+
+        return new BoolTypeNode();
+    }
+
+
 // gestione tipi incompleti	(se lo sono lancia eccezione)
 	
 	@Override

@@ -1,37 +1,10 @@
+push 1
 push 0
-push function0
-lfp
-push 8
-push 7
-lfp
-stm
-ltm
-ltm
-push -2
-add
-lw
-js
+beq label0
+push 0
+b label1
+label0:
+push 1
+label1:
 print
 halt
-
-function0:
-cfp
-lra
-lfp
-push 1
-add
-lw
-lfp
-push 2
-add
-lw
-add
-stm
-sra
-pop
-pop
-pop
-sfp
-ltm
-lra
-js
