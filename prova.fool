@@ -1,7 +1,9 @@
 let
-class Point (x:int, y:int) {
-    fun sum:int() x + y;
-}
+  class Point(x:int) {
+    fun get:int() x;
+  }
+
+  var p:Point = null;
 in
-    print(1 + 2)
+  print(1)
 ;

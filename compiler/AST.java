@@ -311,5 +311,34 @@ public class AST {
 		@Override
 		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {return visitor.visitNode(this);}
 	}
+
+	public static class EmptyNode extends Node {
+		EmptyNode() {}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	public static class EmptyTypeNode extends TypeNode {
+		EmptyTypeNode() {}
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
+	public static class RefTypeNode extends TypeNode {
+		final String id;
+		RefTypeNode(String i) { id = i; }
+
+		@Override
+		public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+			return visitor.visitNode(this);
+		}
+	}
+
 	
 }

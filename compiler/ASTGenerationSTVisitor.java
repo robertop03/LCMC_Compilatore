@@ -311,5 +311,19 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         }
         return n;
     }
+
+    @Override
+    public Node visitNull(NullContext c) {
+        if (print) printVarAndProdName(c);
+        return new EmptyNode();
+    }
+
+    @Override
+    public Node visitIdType(IdTypeContext c) {
+        if (print) printVarAndProdName(c);
+        return new RefTypeNode(c.ID().getText());
+    }
+
+
 }
 

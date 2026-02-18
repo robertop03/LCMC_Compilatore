@@ -1,6 +1,5 @@
 package compiler;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import compiler.AST.*;
 import compiler.exc.*;
@@ -231,7 +230,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	@Override
 	public Void visitNode(ClassNode n) {
 
-		if (print) printNode(n, n.id);   // NON n.val
+		if (print) printNode(n, n.id);
 
 		Map<String, STentry> globalST = symTable.get(0);
 
@@ -326,5 +325,22 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
+	@Override
+	public Void visitNode(EmptyNode n) {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(EmptyTypeNode n) {
+		if (print) printNode(n);
+		return null;
+	}
+
+	@Override
+	public Void visitNode(RefTypeNode n) {
+		if (print) printNode(n, n.id);
+		return null;
+	}
 
 }

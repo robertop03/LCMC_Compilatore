@@ -291,4 +291,23 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         if (print) printNode(n,n.val.toString());
         return "push "+n.val;
     }
+
+    @Override
+    public String visitNode(EmptyNode n) {
+        if (print) printNode(n);
+        return "push 0\n";
+    }
+
+    @Override
+    public String visitNode(EmptyTypeNode n) {
+        if (print) printNode(n);
+        return "";
+    }
+
+    @Override
+    public String visitNode(RefTypeNode n) {
+        if (print) printNode(n, n.id);
+        return "";
+    }
+
 }

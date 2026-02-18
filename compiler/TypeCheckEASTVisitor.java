@@ -235,12 +235,31 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return null;
 	}
 
-// STentry (ritorna campo type)
+	// STentry (ritorna campo type)
 
 	@Override
 	public TypeNode visitSTentry(STentry entry) throws TypeException {
 		if (print) printSTentry("type");
 		return ckvisit(entry.type); 
 	}
+
+	@Override
+	public TypeNode visitNode(EmptyNode n) throws TypeException {
+		if (print) printNode(n);
+		return new EmptyTypeNode();
+	}
+
+	@Override
+	public TypeNode visitNode(EmptyTypeNode n) throws TypeException {
+		if (print) printNode(n);
+		return n;
+	}
+
+	@Override
+	public TypeNode visitNode(RefTypeNode n) throws TypeException {
+		if (print) printNode(n, n.id);
+		return n;
+	}
+
 
 }
