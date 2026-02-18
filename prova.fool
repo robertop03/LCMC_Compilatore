@@ -1,2 +1,7 @@
-print(3<=3)
+let
+class Point (x:int, y:int) {
+    fun sum:int() x + y;
+}
+in
+    print(1 + 2)
 ;

@@ -244,5 +244,72 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
         n.setLine(c.ID().getSymbol().getLine());
         return n;
     }
+
+    @Override
+    public Node visitCldec(CldecContext c) {
+        if (print) printVarAndProdName(c);
+
+        String classId = c.ID(0).getText();
+
+        String superId = null;
+        int firstFieldIndex = 1;
+
+        if (c.EXTENDS() != null) {
+            superId = c.ID(1).getText();
+            firstFieldIndex = 2;
+        }
+
+        List<FieldNode> fieldList = new ArrayList<>();
+        for (int i = 0; i < c.type().size(); i++) {
+            String fid = c.ID(firstFieldIndex + i).getText();
+            TypeNode ftype = (TypeNode) visit(c.type(i));
+
+            FieldNode f = new FieldNode(fid, ftype);
+            f.setLine(c.ID(firstFieldIndex + i).getSymbol().getLine());
+            fieldList.add(f);
+        }
+
+        List<MethodNode> methodList = new ArrayList<>();
+        for (FOOLParser.MethdecContext m : c.methdec()) {
+            methodList.add((MethodNode) visit(m));
+        }
+
+        Node n = new ClassNode(classId, superId, fieldList, methodList);
+        n.setLine(c.CLASS().getSymbol().getLine());
+        return n;
+    }
+
+    @Override
+    public Node visitMethdec(MethdecContext c) {
+        if (print) printVarAndProdName(c);
+
+        List<ParNode> parList = new ArrayList<>();
+        for (int i = 1; i < c.ID().size(); i++) {
+            ParNode p = new ParNode(
+                c.ID(i).getText(),
+                (TypeNode) visit(c.type(i))
+            );
+            p.setLine(c.ID(i).getSymbol().getLine());
+            parList.add(p);
+        }
+
+        List<DecNode> decList = new ArrayList<>();
+        for (FOOLParser.DecContext dec : c.dec()) {
+            decList.add((DecNode) visit(dec));
+        }
+
+        Node n = null;
+        if (c.ID().size() > 0) { // non-incomplete ST
+            n = new MethodNode(
+                c.ID(0).getText(),
+                (TypeNode) visit(c.type(0)),
+                parList,
+                decList,
+                (Node) visit(c.exp())
+            );
+            n.setLine(c.FUN().getSymbol().getLine());
+        }
+        return n;
+    }
 }
 
