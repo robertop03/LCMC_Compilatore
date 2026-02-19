@@ -1,29 +1,30 @@
 let
 
-class Counter(value:int) {
-    fun inc:int() value + 1;
-    fun add:int(x:int) value + x;
-    fun get:int() value;
+class A(x:int) {
+	fun get:int() x;
+	fun inc:int() x + 1;
 }
 
-class Pair(a:int, b:int) {
-    fun sum:int() a + b;
-    fun scale:int(k:int) (a + b) * k;
+class B extends A(y:int, z:int) {
+	fun get:int() y + z;
+	fun sum:int() y + z;
 }
 
-var c:Counter = new Counter(10);
-var p:Pair = new Pair(3,4);
-var n:Counter = null;
+var a:A = new A(10);
+var b:B = new B(10,3,4);
 
-var r1:int = c.inc(p.sum());
-var r2:int = p.scale(c.get());
+var ra:int = a.get();
+var rb:int = b.get();
+var rs:int = b.sum();
+
+var p:A = b;
 
 in
-    print(
-        if (n == null) then {
-            r1 + r2
-        } else {
-            0
-        }
-    )
+	print(
+		if (p == null) then {
+			0
+		} else {
+			p.get() + ra + rb + rs
+		}
+	)
 ;
