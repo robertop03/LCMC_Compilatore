@@ -330,6 +330,21 @@ public class AST {
 		}
 	}
 
+    public static class NewNode extends Node {
+        final String id;
+        final List<Node> arglist;
+        STentry entry;
+        NewNode(String i, List<Node> p) {
+            id = i;
+            arglist = Collections.unmodifiableList(p);
+        }
+
+        @Override
+        public <S,E extends Exception> S accept(BaseASTVisitor<S,E> visitor) throws E {
+            return visitor.visitNode(this);
+        }
+    }
+
 	public static class RefTypeNode extends TypeNode {
 		final String id;
 		RefTypeNode(String i) { id = i; }
@@ -339,6 +354,4 @@ public class AST {
 			return visitor.visitNode(this);
 		}
 	}
-
-	
 }

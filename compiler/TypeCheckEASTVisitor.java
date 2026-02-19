@@ -255,6 +255,24 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return n;
 	}
 
+    @Override
+    public TypeNode visitNode(NewNode n) throws TypeException {
+        if (print) printNode(n, n.id);
+        TypeNode t = visit(n.entry);
+        if (!(t instanceof ClassTypeNode))
+            throw new TypeException("Invocation of new on a non-class " + n.id, n.getLine());
+
+        ClassTypeNode ct = (ClassTypeNode) t;
+        if (ct.allFields.size() != n.arglist.size())
+            throw new TypeException("Wrong number of fields in new " + n.id, n.getLine());
+
+        for (int i = 0; i < n.arglist.size(); i++)
+            if (!isSubtype(visit(n.arglist.get(i)), ct.allFields.get(i)))
+                throw new TypeException("Wrong type for " + (i + 1) + "-th field in new " + n.id, n.getLine());
+
+        return new RefTypeNode(n.id);
+    }
+
 	@Override
 	public TypeNode visitNode(RefTypeNode n) throws TypeException {
 		if (print) printNode(n, n.id);

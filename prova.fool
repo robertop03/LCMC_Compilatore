@@ -1,9 +1,23 @@
 let
-  class Point(x:int) {
-    fun get:int() x;
-  }
+  var x:int = 5;
+  var y:int = 10;
 
-  var p:Point = null;
+  fun testComparisons:bool(a:int, b:int)
+    if (a <= b) then {
+      if (a == b) then { false } else { true }
+    } else {
+      false
+    };
+
+  fun testLogic:bool(val:int)
+    let
+      var threshold:int = 7;
+    in
+      (val >= threshold) && !(val == 100);
+
 in
-  print(1)
-;
+  print(
+    if (testComparisons(x, y) && testLogic(8))
+      then { 1 }
+      else { 0 }
+  );

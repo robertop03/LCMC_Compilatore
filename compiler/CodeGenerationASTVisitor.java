@@ -305,6 +305,22 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
     }
 
     @Override
+    public String visitNode(NewNode n) {
+        if (print) printNode(n, n.id);
+        String argCode = "";
+
+        for (Node arg : n.arglist) argCode = nlJoin(argCode, visit(arg));
+
+        return nlJoin(
+                argCode,
+                "push " + n.entry.offset,
+                "lhp",
+                "stm",
+                "new"
+        );
+    }
+
+    @Override
     public String visitNode(RefTypeNode n) {
         if (print) printNode(n, n.id);
         return "";
