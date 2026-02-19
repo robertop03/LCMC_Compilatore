@@ -326,4 +326,26 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
         return "";
     }
 
+    @Override
+    public String visitNode(ClassCallNode n) {
+        String argCode = null, getAR = null;
+        for (int i = n.arglist.size() - 1; i >= 0; i--) argCode = nlJoin(argCode, visit(n.arglist.get(i)));
+        for (int i = 0; i < n.nl - n.entry.nl; i++) getAR = nlJoin(getAR, "lw");
+
+        return nlJoin(
+                "lfp",
+                argCode, // generate code for argument expressions in reversed order
+                "lfp",
+                getAR, // Retrieve address of frame containing ID1 declaration
+                "push " + n.entry.offset, "add", // Compute address of ID1 declaration
+                "lw", // Load object pointer (ID1)
+                "stm", // Set $tm to popped value (object pointer)
+                "ltm", // Load Access Link (object pointer)
+                "ltm", // Duplicate top of stack (object pointer)
+                "lw", // load value on stack from memory
+                "push " + n.methodEntry.offset, "add", // Compute address of method in dispatch table
+                "lw", // Load address of method
+                "js"  // Jump to popped address (saving address of subsequent instruction in $ra)
+        );
+    }
 }

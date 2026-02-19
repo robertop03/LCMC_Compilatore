@@ -279,5 +279,73 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 		return n;
 	}
 
+    @Override
+    public TypeNode visitNode(ClassCallNode n) throws TypeException {
+        if (print) printNode(n,n.id1);
+        TypeNode t = visit(n.entry);
+
+        if ( !(t instanceof RefTypeNode) )
+            throw new TypeException("Invocation of a non-class " + n.id1,n.getLine());
+
+
+        if (!(n.methodEntry.type instanceof ArrowTypeNode))
+            throw new TypeException("Invocation of a non-function " + n.id2, n.getLine());
+        ArrowTypeNode at = (ArrowTypeNode) n.methodEntry.type;
+        if (!(at.parlist.size() == n.arglist.size()))
+            throw new TypeException("Wrong number of parameters in the invocation of " + n.id2, n.getLine());
+        for (int i = 0; i < n.arglist.size(); i++)
+            if (!(isSubtype(visit(n.arglist.get(i)), at.parlist.get(i))))
+                throw new TypeException("Wrong type for " + (i + 1) + "-th parameter in the invocation of " + n.id2,
+                        n.getLine());
+        return at.ret;
+
+    }
+
+    @Override
+    public TypeNode visitNode(ClassNode n) throws TypeException {
+        if (print) printNode(n, n.id);
+
+        for (FieldNode f : n.fieldNodes) visit(f);
+        for (MethodNode m : n.methodNodes) visit(m);
+
+        return null;
+    }
+
+    @Override
+    public TypeNode visitNode(FieldNode n) throws TypeException {
+        if (print) printNode(n, n.id);
+        ckvisit(n.getType());
+        return null;
+    }
+
+    @Override
+    public TypeNode visitNode(MethodNode n) throws TypeException {
+        if (print) printNode(n, n.id);
+
+        for (ParNode p : n.parlist) ckvisit(p.getType());
+
+        for (Node dec : n.declist)
+            try {
+                visit(dec);
+            } catch (IncomplException e) {
+            } catch (TypeException e) {
+                System.out.println("Type checking error in a declaration: " + e.text);
+            }
+
+        if (!isSubtype(visit(n.exp), ckvisit(n.retType)))
+            throw new TypeException("Wrong return type for method " + n.id, n.getLine());
+
+        return null;
+    }
+
+    @Override
+    public TypeNode visitNode(ClassTypeNode n) throws TypeException {
+        if (print) printNode(n);
+
+        for (TypeNode f : n.allFields) ckvisit(f);
+        for (ArrowTypeNode m : n.allMethods) ckvisit(m);
+
+        return null;
+    }
 
 }

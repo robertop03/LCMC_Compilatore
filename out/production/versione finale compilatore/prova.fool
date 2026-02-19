@@ -1,4 +1,29 @@
-print(
-    (100 - 20/5) +
-    ((7-3) * (50/10))
-);
+let
+
+class Counter(value:int) {
+    fun inc:int() value + 1;
+    fun add:int(x:int) value + x;
+    fun get:int() value;
+}
+
+class Pair(a:int, b:int) {
+    fun sum:int() a + b;
+    fun scale:int(k:int) (a + b) * k;
+}
+
+var c:Counter = new Counter(10);
+var p:Pair = new Pair(3,4);
+var n:Counter = null;
+
+var r1:int = c.inc(p.sum());
+var r2:int = p.scale(c.get());
+
+in
+    print(
+        if (n == null) then {
+            r1 + r2
+        } else {
+            0
+        }
+    )
+;

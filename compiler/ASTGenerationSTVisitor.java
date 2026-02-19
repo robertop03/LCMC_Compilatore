@@ -45,10 +45,17 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     @Override
     public Node visitLetInProg(LetInProgContext c) {
         if (print) printVarAndProdName(c);
+
         List<DecNode> declist = new ArrayList<>();
-        for (DecContext dec : c.dec()) declist.add((DecNode) visit(dec));
+
+        for (ParseTree ch : c.children) {
+            if (ch instanceof FOOLParser.CldecContext) declist.add((DecNode) visit(ch));
+            else if (ch instanceof FOOLParser.DecContext) declist.add((DecNode) visit(ch));
+        }
+
         return new ProgLetInNode(declist, visit(c.exp()));
     }
+
 
     @Override
     public Node visitNoDecProg(NoDecProgContext c) {

@@ -357,4 +357,52 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		return null;
 	}
 
+    @Override
+    public Void visitNode(ClassCallNode n) {
+        if (print) printNode(n);
+
+        STentry entry = stLookup(n.id1);
+        if (entry.type == null) {
+            System.out.println("Var id1 " + n.id1 + " at line " + n.getLine() + " not declared");
+            stErrors++;
+            return null;
+        }
+
+        RefTypeNode ref;
+        if (!(entry.type instanceof RefTypeNode)) {
+            System.out.println("ID1: " + n.id1 + " at line " + n.getLine() + " is not a class");
+            stErrors++;
+            return null;
+        }
+        ref = (RefTypeNode) entry.type;
+
+
+        Map<String, STentry> vtable = classTable.get(ref.id);
+
+        if (vtable == null) {
+            System.out.println("Class of id1 " + n.id1 + " at line " + n.getLine() + " not declared");
+            stErrors++;
+            return null;
+        }
+
+        if(stLookup(n.id1) == null){
+            System.out.println("ID1: " + n.id1 + " at line " + n.getLine() + " not found in vtable");
+            return null;
+        }else{
+            n.nl = nestingLevel;
+            n.entry = stLookup(n.id1);
+        }
+
+        STentry methodEntry = vtable.get(n.id2);
+        if (methodEntry == null) {
+            System.out.println("Method id " + n.id1 + " at line " + n.getLine() + " not declared in class " + ref.id);
+            stErrors++;
+            return null;
+        }
+
+        n.methodEntry = methodEntry;
+
+        for (Node arg : n.arglist) visit(arg);
+        return null;
+    }
 }
