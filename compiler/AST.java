@@ -478,20 +478,6 @@ public class AST {
         }
     }
 
-    public static class MethodTypeNode extends TypeNode {
-
-        final ArrowTypeNode funType;
-
-        public MethodTypeNode(ArrowTypeNode funType) {
-            this.funType = funType;
-        }
-
-        @Override
-        public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
-            return visitor.visitNode(this);
-        }
-    }
-
     public static class BoolTypeNode extends TypeNode {
 
         @Override

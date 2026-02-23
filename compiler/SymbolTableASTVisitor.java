@@ -181,7 +181,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
             STentry overridden = vt.get(f.id);
             STentry fe;
-            if (overridden != null && !(overridden.type instanceof MethodTypeNode)) {
+
+            if (overridden != null && overridden.offset < 0) {
                 fe = new STentry(nestingLevel, f.getType(), overridden.offset);
                 ct.allFields.set(-fe.offset - 1, fe.type);
             } else {
@@ -192,6 +193,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
                     stErrors++;
                 }
             }
+
             vt.put(f.id, fe);
             f.offset = fe.offset;
         }
@@ -210,7 +212,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
             visit(m);
 
             STentry me = vt.get(m.id);
-            ArrowTypeNode funType = ((MethodTypeNode) me.type).funType;
+            ArrowTypeNode funType = (ArrowTypeNode) me.type;
 
             if (m.offset < ct.allMethods.size()) {
                 ct.allMethods.set(m.offset, funType);
@@ -232,7 +234,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(FieldNode n) {
         if (print) printNode(n, n.id);
-
         // handled in visitNode(ClassNode)
         return null;
     }
@@ -247,11 +248,12 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         for (ParNode p : n.parList) {
             parTypes.add(p.getType());
         }
-        MethodTypeNode mType = new MethodTypeNode(new ArrowTypeNode(parTypes, n.retType));
+        ArrowTypeNode mType = new ArrowTypeNode(parTypes, n.retType);
 
         STentry overridden = vt.get(n.id);
         STentry me;
-        if (overridden != null && overridden.type instanceof MethodTypeNode) {
+
+        if (overridden != null && overridden.offset >= 0) {
             me = new STentry(nestingLevel, mType, overridden.offset);
         } else {
             me = new STentry(nestingLevel, mType, decOffset++);
@@ -351,8 +353,11 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         }
 
         STentry methodEntry = vtable.get(n.methId);
-        if (methodEntry == null || !(methodEntry.type instanceof MethodTypeNode)) {
-            System.out.println("Method id " + n.methId + " at line " + n.getLine() + " not declared in class " + classId);
+        if (methodEntry == null
+                || methodEntry.offset < 0
+                || !(methodEntry.type instanceof ArrowTypeNode)) {
+            System.out.println("Method id " + n.methId + " at line " + n.getLine()
+                    + " not declared in class " + classId);
             stErrors++;
         } else {
             n.methodEntry = methodEntry;
@@ -370,7 +375,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         STentry entry = stLookup(n.id);
         if (entry == null) {
-            System.out.println("Fun or Method id " + n.id + " at line " + n.getLine() + " not declared");
+            System.out.println("Fun id " + n.id + " at line " + n.getLine() + " not declared");
             stErrors++;
         } else {
             n.entry = entry;

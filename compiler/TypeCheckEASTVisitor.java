@@ -193,9 +193,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n, n.id);
 
         TypeNode t = visit(n.entry);
-        if (t instanceof MethodTypeNode) {
-            t = ((MethodTypeNode) t).funType;
-        } else if (!(t instanceof ArrowTypeNode)) {
+        if (!(t instanceof ArrowTypeNode)) {
             throw new TypeException("Invocation of a non-function " + n.id, n.getLine());
         }
 
@@ -222,11 +220,11 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         if (print) printNode(n, n.objId + "." + n.methId);
 
         TypeNode mt = visit(n.methodEntry);
-        if (!(mt instanceof MethodTypeNode)) {
+        if (!(mt instanceof ArrowTypeNode)) {
             throw new TypeException("Invocation of a non-method " + n.methId, n.getLine());
         }
 
-        ArrowTypeNode at = ((MethodTypeNode) mt).funType;
+        ArrowTypeNode at = (ArrowTypeNode) mt;
 
         if (at.parList.size() != n.argList.size()) {
             throw new TypeException("Wrong number of parameters in the invocation of " + n.methId, n.getLine());
@@ -251,9 +249,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
 
         if (t instanceof ArrowTypeNode) {
             throw new TypeException("Wrong usage of function identifier " + n.id, n.getLine());
-        }
-        if (t instanceof MethodTypeNode) {
-            throw new TypeException("Wrong usage of method identifier " + n.id, n.getLine());
         }
         if (t instanceof ClassTypeNode) {
             throw new TypeException("Wrong usage of class identifier " + n.id, n.getLine());
@@ -357,12 +352,6 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     public TypeNode visitNode(EmptyNode n) {
         if (print) printNode(n);
         return new EmptyTypeNode();
-    }
-
-    @Override
-    public TypeNode visitNode(MethodTypeNode n) throws TypeException {
-        visit(n.funType);
-        return null;
     }
 
     @Override

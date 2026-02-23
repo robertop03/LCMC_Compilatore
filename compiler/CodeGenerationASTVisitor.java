@@ -140,10 +140,6 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
                 "ltm"
         );
 
-        if (node.entry.type instanceof MethodTypeNode) {
-            commonCode = nlJoin(commonCode, "lw");
-        }
-
         return nlJoin(
                 commonCode,
                 "push " + node.entry.offset,

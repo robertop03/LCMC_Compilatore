@@ -251,12 +251,6 @@ public class PrintEASTVisitor extends BaseEASTVisitor<Void, VoidException> {
     }
 
     @Override
-    public Void visitNode(MethodTypeNode n) {
-        visit(n.funType);
-        return null;
-    }
-
-    @Override
     public Void visitNode(BoolTypeNode n) {
         printNode(n);
         return null;
