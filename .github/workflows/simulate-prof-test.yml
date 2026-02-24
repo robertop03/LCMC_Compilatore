@@ -50,15 +50,17 @@ jobs:
                   distribution: temurin
                   java-version: "17"
 
-            - name: Compile all Java sources
+            - name: Compile all Java sources (with ANTLR jar)
               run: |
                   set -euo pipefail
+                  test -f "lib/antlr-4.13.1-complete.jar"
                   mkdir -p out
                   find . -name "*.java" > sources.txt
                   echo "Java sources found: $(wc -l < sources.txt)"
-                  javac -encoding UTF-8 -d out @sources.txt
+                  javac -encoding UTF-8 -cp "lib/antlr-4.13.1-complete.jar" -d out @sources.txt
 
             - name: Run compiler.Test
               run: |
                   set -euo pipefail
-                  java -cp out compiler.Test
+                  test -f "prova.fool"
+                  java -cp "out:lib/antlr-4.13.1-complete.jar" compiler.Test
