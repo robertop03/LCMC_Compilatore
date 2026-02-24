@@ -59,8 +59,21 @@ jobs:
                   echo "Java sources found: $(wc -l < sources.txt)"
                   javac -encoding UTF-8 -cp "lib/antlr-4.13.1-complete.jar" -d out @sources.txt
 
-            - name: Run compiler.Test
+            - name: Run compiler.Test, show output and verify last line is 50000
               run: |
                   set -euo pipefail
                   test -f "prova.fool"
-                  java -cp "out:lib/antlr-4.13.1-complete.jar" compiler.Test
+
+                  echo "===== RUNNING compiler.Test ====="
+                  java -cp "out:lib/antlr-4.13.1-complete.jar" compiler.Test | tee program_output.txt
+                  echo "===== END PROGRAM OUTPUT ====="
+
+                  last_line=$(tail -n 1 program_output.txt | tr -d '\r' | xargs)
+                  echo "Detected last line: '$last_line'"
+
+                  if [ "$last_line" != "50000" ]; then
+                      echo "ERROR: Expected final result 50000"
+                      exit 1
+                  fi
+
+                  echo "Result check passed."
