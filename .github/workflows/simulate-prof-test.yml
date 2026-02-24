@@ -25,7 +25,6 @@ jobs:
             - name: Overlay only the 7 allowed files
               run: |
                   set -euo pipefail
-
                   files=(
                       "compiler/AST.java"
                       "compiler/ASTGenerationSTVisitor.java"
@@ -51,17 +50,15 @@ jobs:
                   distribution: temurin
                   java-version: "17"
 
-            - name: Build and test (Gradle)
+            - name: Compile all Java sources
               run: |
                   set -euo pipefail
-                  if [ -f "./gradlew" ]; then
-                      chmod +x ./gradlew
-                      ./gradlew clean test --no-daemon
-                  elif [ -f "pom.xml" ]; then
-                      mvn -B clean test
-                  elif [ -f "build.xml" ]; then
-                      ant test
-                  else
-                      echo "No gradlew, pom.xml, or build.xml found. Add the right build command."
-                      exit 1
-                  fi
+                  mkdir -p out
+                  find . -name "*.java" > sources.txt
+                  echo "Java sources found: $(wc -l < sources.txt)"
+                  javac -encoding UTF-8 -d out @sources.txt
+
+            - name: Run compiler.Test
+              run: |
+                  set -euo pipefail
+                  java -cp out compiler.Test
