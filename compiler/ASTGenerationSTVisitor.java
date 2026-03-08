@@ -25,26 +25,22 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
      */
     String indent;
 
-    /**
-     * Flag debug: se true stampa quali produzioni/contesti stiamo visitando.
-     */
     public boolean print;
 
     ASTGenerationSTVisitor() {}
 
-    /**
-     * @param debug se true abilita la stampa dei contesti visitati.
-     */
     ASTGenerationSTVisitor(boolean debug) {
         print = debug;
     }
 
+
     /**
-     * Stampa il nome del contesto ANTLR corrente, con un prefisso che evidenzia
-     * quando siamo dentro una produzione "specializzata" (alternative etichettate).
-     *
-     * Serve solo per debug di grammatica/visitor.
-     */
+    * Metodo di debug per ANTLR.
+    *
+    * Stampa il nome della produzione della grammatica associata al nodo
+    * del parse tree corrente. Se il nodo deriva da una alternativa
+    * etichettata (#label), stampa anche il nome della regola padre.
+    */
     private void printVarAndProdName(ParserRuleContext ctx) {
         String prefix = "";
         Class<?> ctxClass = ctx.getClass(), parentClass = ctxClass.getSuperclass();
@@ -55,9 +51,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
     }
 
     /**
-     * Override generico di visit:
-     * - gestisce t == null in modo safe
-     * - aggiorna indent per la stampa gerarchica (debug)
+     * Override generico di visit: aggiorna indent per la stampa gerarchica (debug)
      */
     @Override
     public Node visit(ParseTree t) {

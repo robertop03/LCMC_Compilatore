@@ -151,7 +151,7 @@ public class AST {
         // Entry della superclasse nella symbol table
         STentry superEntry;
 
-        // Tipo completo della classe (campi + metodi anche ereditati)
+        // Tipo dato dalla classe (es: class A --> type = A )
         ClassTypeNode type;
 
         public ClassNode(String id, String superID, List<FieldNode> fields, List<MethodNode> methods) {
