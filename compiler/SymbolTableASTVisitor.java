@@ -61,6 +61,22 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         return entry;
     }
 
+    private void checkTypeExists(TypeNode type, int line) {
+        if (!(type instanceof RefTypeNode refType)) {
+            return;
+        }
+
+        if (symTable.isEmpty()) {
+            return;
+        }
+
+        STentry entry = symTable.get(0).get(refType.id);
+        if (entry == null || !(entry.type instanceof ClassTypeNode)) {
+            System.out.println("Class type " + refType.id + " at line " + line + " not declared");
+            stErrors++;
+        }
+    }
+
     SymbolTableASTVisitor() {}
 
     SymbolTableASTVisitor(boolean debug) {
@@ -105,12 +121,15 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     public Void visitNode(FunNode n) {
         if (print) printNode(n);
 
+        checkTypeExists(n.retType, n.getLine());
+
         // Recupera lo scope corrente.
         Map<String, STentry> scopeTable = symTable.get(nestingLevel);
 
         // Prende i tipi dei parametri.
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode par : n.parList) {
+            checkTypeExists(par.getType(), par.getLine());
             parTypes.add(par.getType());
         }
 
@@ -169,6 +188,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
          * L'espressione viene analizzata prima di inserire la variabile nello scope, questo per evitare che la variabile sia visibile dentro la propria inizializzazione.
          * int x = x + 1 Evita che il compilatore veda un'assegnazione di questo tipo come valida.
          */
+        checkTypeExists(n.getType(), n.getLine());
         visit(n.exp);
 
         Map<String, STentry> scopeTable = symTable.get(nestingLevel);
@@ -199,7 +219,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         if (n.superID != null) {
             Map<String, STentry> superVT = classTable.get(n.superID);
             if (superVT == null) {
-                System.out.println("Extending class id " + n.superID + " at line " + n.getLine() + " not declared");
+                System.out.println("Extending class id " + n.superID + " at line "
+                        + n.getLine() + " not declared");
                 stErrors++;
             } else {
                 STentry superEntry = globalST.get(n.superID);
@@ -219,7 +240,8 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         // L' entry della classe ct viene inserito nello scope globale.
         if (globalST.put(n.id, classEntry) != null) {
-            System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
+            System.out.println("Class id " + n.id + " at line " + n.getLine()
+                    + " already declared");
             stErrors++;
         }
 
@@ -249,9 +271,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
 
         // GESTIONE CAMPI:
         for (FieldNode f : n.fields) {
+            checkTypeExists(f.getType(), f.getLine());
+
             if (seenInClass.contains(f.id)) {
-                System.out.println("Field id " + f.id + " at line " + f.getLine() + " already declared in class");
+                System.out.println("Field or method id " + f.id + " at line "
+                        + f.getLine() + " already declared in class " + n.id);
                 stErrors++;
+                continue;
             }
             seenInClass.add(f.id);
 
@@ -285,8 +311,10 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         for (MethodNode m : n.methods) {
             // Controlla duplicati nella stessa classe.
             if (seenInClass.contains(m.id)) {
-                System.out.println("Method id " + m.id + " at line " + m.getLine() + " already declared in class");
+                System.out.println("Field or method id " + m.id + " at line "
+                        + m.getLine() + " already declared in class " + n.id);
                 stErrors++;
+                continue;
             }
             seenInClass.add(m.id);
 
@@ -328,11 +356,14 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     public Void visitNode(MethodNode n) {
         if (print) printNode(n, n.id);
 
+        checkTypeExists(n.retType, n.getLine());
+
         // Recupera la virtual table della classe corrente.
         Map<String, STentry> vt = symTable.get(nestingLevel);
 
         List<TypeNode> parTypes = new ArrayList<>();
         for (ParNode p : n.parList) {
+            checkTypeExists(p.getType(), p.getLine());
             parTypes.add(p.getType());
         }
         // Costruisce il tipo funzionale del metodo.
@@ -418,12 +449,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(RefTypeNode n) {
         if (print) printNode(n, n.id);
-
-        // Qui utilizzo classTable e non symTable.get(0) perché sto controllando specificamente se esiste una classe con quel nome, non sto cercando un simbolo globale con quel nome.
-        if (!classTable.containsKey(n.id)) {
-            System.out.println("Class with id " + n.id + " at line " + n.getLine() + " not declared");
-            stErrors++;
-        }
+        checkTypeExists(n, n.getLine());
         return null;
     }
 
