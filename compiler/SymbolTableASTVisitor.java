@@ -109,7 +109,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
     @Override
     public Void visitNode(ProgNode n) {
         if (print) printNode(n);
+
+        Map<String, STentry> globalScope = new HashMap<>();
+        symTable.add(globalScope);
+
         visit(n.exp);
+
+        symTable.remove(0);
         return null;
     }
 
