@@ -192,6 +192,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     public TypeNode visitNode(CallNode n) throws TypeException {
         if (print) printNode(n, n.id);
 
+        if (n.entry == null) {
+            throw new IncomplException();
+        }
+
         TypeNode t = visit(n.entry);
         if (!(t instanceof ArrowTypeNode)) {
             throw new TypeException("Invocation of a non-function " + n.id, n.getLine());
@@ -219,6 +223,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     public TypeNode visitNode(ClassCallNode n) throws TypeException {
         if (print) printNode(n, n.objId + "." + n.methId);
 
+        if (n.entry == null || n.methodEntry == null) {
+            throw new IncomplException();
+        }
+
         TypeNode mt = visit(n.methodEntry);
         if (!(mt instanceof ArrowTypeNode)) {
             throw new TypeException("Invocation of a non-method " + n.methId, n.getLine());
@@ -245,6 +253,11 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(IdNode n) throws TypeException {
         if (print) printNode(n, n.id);
+
+        if (n.entry == null) {
+            throw new IncomplException();
+        }
+
         TypeNode t = visit(n.entry);
 
         if (t instanceof ArrowTypeNode) {
@@ -259,6 +272,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
     @Override
     public TypeNode visitNode(NewNode n) throws TypeException {
         if (print) printNode(n, n.id);
+
+        if (n.entry == null) {
+            throw new IncomplException();
+        }
 
         if (!(n.entry.type instanceof ClassTypeNode)) {
             throw new TypeException("Invocation of new on a non-class " + n.id, n.getLine());
@@ -291,6 +308,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode, TypeExceptio
         }
 
         if (n.superID != null) {
+            if (n.superEntry == null) {
+                throw new IncomplException();
+            }
+
             superType.put(n.id, n.superID);
 
             ClassTypeNode classType = n.type;
