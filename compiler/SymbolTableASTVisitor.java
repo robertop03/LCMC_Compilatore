@@ -221,7 +221,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void, VoidException> {
         // Creazione del tipo della classe.
         ClassTypeNode ct = new ClassTypeNode(new ArrayList<>(), new ArrayList<>());
 
-        // Se la classe estende una superclasse, recupera la sua virtual table, recuper il ClassTypeNode della sua superclasse e copia liste di campi e metodi (che eriditerà).
+        // Se la classe estende una superclasse, recupera la sua virtual table, recupera il ClassTypeNode della sua superclasse e copia liste di campi e metodi (che erediterà).
         if (n.superID != null) {
             Map<String, STentry> superVT = classTable.get(n.superID);
             if (superVT == null) {
